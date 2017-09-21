@@ -18,6 +18,7 @@ package com.example.android.uamp.ui;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
@@ -25,6 +26,7 @@ import android.text.TextUtils;
 
 import com.example.android.uamp.R;
 import com.example.android.uamp.utils.LogHelper;
+import com.example.android.uamp.MyCustomReceiver;
 
 /**
  * Main activity for the music player.
@@ -67,6 +69,8 @@ public class MusicPlayerActivity extends BaseActivity
             startFullScreenActivityIfNeeded(getIntent());
         }
     }
+
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {

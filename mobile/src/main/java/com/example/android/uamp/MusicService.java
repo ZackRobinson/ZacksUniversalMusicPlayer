@@ -286,6 +286,9 @@ public class MusicService extends MediaBrowserServiceCompat implements
     @Override
     public void onDestroy() {
         LogHelper.d(TAG, "onDestroy");
+
+        unregisterReceiver(receiver);//
+        // Released MyCustomReceiver
         unregisterCarConnectionReceiver();
         // Service is being killed, so make sure we release our resources
         mPlaybackManager.handleStopRequest(null);
@@ -355,19 +358,29 @@ public class MusicService extends MediaBrowserServiceCompat implements
         }
     }
 
+    private static final String permission = "zack.says.okay";
+    MyCustomReceiver receiver = new MyCustomReceiver(); // Zack's Broadcast Receiver
+    IntentFilter intentFilter = new IntentFilter(); // Zack's 5 system broadcasts listeners
     /**
      * Callback method called from PlaybackManager whenever the music is about to play.
      */
     @Override
     public void onPlaybackStart() {
         mSession.setActive(true);
-
         mDelayedStopHandler.removeCallbacksAndMessages(null);
 
         // The service needs to continue running even after the bound client (usually a
         // MediaController) disconnects, otherwise the music playback will stop.
         // Calling startService(Intent) will keep the service running until it is explicitly killed.
         startService(new Intent(getApplicationContext(), MusicService.class));
+
+
+        intentFilter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED); // Adds an airplane mode listener to the intent
+        intentFilter.addAction(Intent.ACTION_TIME_TICK); // Adds a time ticker to the intent
+        intentFilter.addAction(Intent.ACTION_BATTERY_LOW); // Adds a battery monitor to the intent
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON); // Adds a screen monitor to the intent
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF); // Adds another screen monitor to the intent
+        registerReceiver(receiver, intentFilter, permission, null); // Effectively puts the listener in the manifest
     }
 
 
